@@ -1,9 +1,11 @@
 import Chart from 'chart.js';
-import { interpolateCool, interpolateWarm } from 'd3-scale-chromatic';
-import { interpolateColors, mix2Scales } from './colorCalculations';
+import * as d3 from 'd3';
+import { interpolateColors } from './colorCalculations';
 
-export function createChart(chartId, chartData, formatData) {
+export function createChart(chartId, scaleName, chartData, rangeInfo, formatData) {
   const ctx = document.getElementById(chartId);
+
+  console.log('chart data', chartData);
 
   /* eslint-disable */
   let COLORS = [];
@@ -12,36 +14,8 @@ export function createChart(chartId, chartData, formatData) {
   // const testData = [40000, 15000, 20000, 60000, 15000, 20000, 25000, 30000, 18000, 28000, 30000, 15000];
   // const dataLength = testData.length;
 
-  const use2Scales = dataLength > 6;
+  COLORS = interpolateColors(dataLength, d3['interpolate' + scaleName], rangeInfo);
 
-  if (use2Scales) {
-    let data1Info = {
-      interpolateMethod: interpolateCool,
-      rangeInfo: {
-        start: 0, 
-        end: 0.65,
-        useEndAsStart: true,
-      }
-    };
-
-    let data2Info = {
-      interpolateMethod: interpolateWarm,
-      rangeInfo: {
-        start: 0, 
-        end: 0.65,
-        useEndAsStart: true,
-      }
-    };
-    COLORS = mix2Scales(dataLength, data1Info, data2Info);
-
-  } else {
-    let rangeInfo = {
-      start: 0, 
-      end: 0.65,
-      useEndAsStart: true,
-    };
-    COLORS = interpolateColors(dataLength, interpolateWarm, rangeInfo);
-  }
 
   /* eslint-disable */
   const myChart = new Chart(ctx, {
@@ -84,7 +58,24 @@ export function createChart(chartId, chartData, formatData) {
       },
     },
   });
+
+  return myChart;
 }
+
+export function updateChart(chartObj, scaleName, chartData, rangeInfo, formatData) {
+  let dataLength = chartData.data.length;
+
+  const COLORS = interpolateColors(dataLength, d3['interpolate' + scaleName], rangeInfo);
+
+  chartObj.data.labels = chartData.labels;
+  chartObj.data.datasets[0].backgroundColor = COLORS;
+  chartObj.data.datasets[0].hoverBackgroundColor = COLORS;
+  chartObj.data.datasets[0].data = chartData.data;
+
+  chartObj.update();
+}
+
 export default {
   createChart,
+  updateChart
 };
