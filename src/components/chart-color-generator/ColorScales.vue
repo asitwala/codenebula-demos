@@ -20,7 +20,7 @@ import COLOR_SCALES from '../../utils/colorScaleNames';
 export default {
   data() {
     return {
-      width: 400,
+      width: 300,
       height: 24,
       scales: COLOR_SCALES,
       selectedScale: '',

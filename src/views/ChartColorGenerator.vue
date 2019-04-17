@@ -5,15 +5,26 @@
         <ColorScales/>
       </v-card>
 
-      <div class="cn-selected-color-scale-container">
+      <v-card class="cn-selected-color-scale-container">
         <SelectedColorScale/>
-      </div>
+      </v-card>
+
     </div>
 
     <div class="cn-chart-generator-right">
       <div class="cn-colored-pie-chart">
         <canvas id="pie-chart"></canvas>
       </div>
+
+      <v-card class="cn-colors-container">
+        <div class="cn-colors">
+          <div v-for="color in colors" class="cn-color-block-container">
+            <div class="cn-color-block" :style="`background-color: ${color}`">
+            </div>
+            <p>{{ color }}</p>
+          </div>
+        </div>
+      </v-card>
     </div>
 
     <div class="cn-chart-generator-far-right">
@@ -25,6 +36,9 @@
 </template>
 
 <script>
+
+import * as d3 from 'd3';
+
 import { dollarFormat } from '../utils/dollarFormat';
 import { createChart, updateChart } from '../utils/pie-chart';
 
@@ -102,6 +116,17 @@ export default {
       });
       return this.labelValues;
     },
+    colors() {
+      let colors = [];
+      const dataLength = this.dataValues.length;
+      let i, color;
+      for (i = 0; i < dataLength; i++) {
+        color = this.start + (i * ((this.end - this.start) / dataLength));
+        colors.push(d3.color(d3['interpolate' + this.scaleName](color)).hex());
+      }
+      console.log('colors', colors);
+      return colors;
+    },
     chartData() {
       return {
         data: this.dataValues,
@@ -147,12 +172,17 @@ export default {
   }
 
   .cn-chart-generator-left {
-    max-width: 450px;
+    max-width: 350px;
   }
 
   .cn-chart-generator-far-right {
     max-width: 200px;
     justify-content: flex-end;
+    text-align: right;
+    background-color: #eeeeee;
+    max-height: 180px;
+    margin-top: -24px;
+    padding-top: 12px;
   }
 
   .cn-color-scales-container {
@@ -164,15 +194,47 @@ export default {
   }
 
   .cn-selected-color-scale-container {
-    padding: 12px 24px 24px 24px;
+    margin-top: 24px;
+    padding: 24px;
   }
 
+  // .cn-chart-generator-right {
+  //   max-width: 600px;
+  // }
+
   .cn-colored-pie-chart {
-    max-width: 600px;
-    max-height: 500px;
+    width: 100% !important;
   }
 
   #pie-chart {
     width: 100% !important;
+  }
+
+  .cn-colors-container {
+    padding: 24px;
+    margin: 36px 0 0 24px;
+  }
+
+  .cn-colors {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+
+  .cn-color-block-container {
+    display: flex;
+    align-items: center;
+    margin: 0 24px 24px 0;
+
+    p {
+      margin-bottom: 0px;
+    }
+  }
+
+  .cn-color-block {
+    height: 24px;
+    width: 24px;
+    display: inline-block;
+    margin-right: 12px;
   }
 </style>

@@ -41,7 +41,7 @@ import * as d3 from 'd3';
 export default {
   data() {
     return {
-      width: 400,
+      width: 300,
       height: 24,
       range: [0, 100],
     };
