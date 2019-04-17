@@ -20,6 +20,9 @@ const interpolators = [
   'YlGn',
   'YlOrBr',
   'YlOrRd',
+  'Spectral',
+  'RdYlGn',
+  'RdYlBu',
 ];
 
 export default interpolators;

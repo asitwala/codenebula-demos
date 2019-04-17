@@ -86,11 +86,25 @@ export default {
     scaleName() {
       return this.$store.getters.scale;
     },
-    start() {
-      return this.range[0] / 100;
+    start: {
+      get() {
+        return this.$store.getters.start;
+      }, 
+      set(start) {
+        const parsedStart = parseFloat(start);
+        this.range[0] = parsedStart * 100;
+        this.$store.commit('setStart', parsedStart);
+      },
     },
-    end() {
-      return this.range[1] / 100;
+    end: {
+      get() {
+        return this.$store.getters.end;
+      },
+      set(end) {
+        const parsedEnd = parseFloat(end);
+        this.range[1] = parsedEnd * 100;
+        this.$store.commit('setEnd', parsedEnd);
+      }
     },
   },
   watch: {
@@ -106,6 +120,8 @@ export default {
       handler: function (value) {
         const start = value[0] / 100;
         const end = value[1] / 100;
+        this.$store.commit('setStart', start);
+        this.$store.commit('setEnd', end);
         this.updateScale(this.scaleName, '.cn-selected-scale-with-range svg', false, start, end);
       },
       deep: true,
