@@ -1,36 +1,57 @@
 <template>
   <div class="cn-chart-generator">
+
+    <!-- LEFT -->
     <div class="cn-chart-generator-left">
-      <v-card class="cn-color-scales-container">
-        <ColorScales/>
-      </v-card>
+      <p><span>codeNebula</span> <span> presents</span></p>
+      <p>Generating Chart Colors with D3 & ChartJS</p>
 
-      <v-card class="cn-selected-color-scale-container">
-        <SelectedColorScale/>
-      </v-card>
+      <div style="display: flex; align-items: flex-start; flex-wrap: wrap; justify-content: center; margin-top: 48px;">
+        <div class="cn-colored-pie-chart" style="flex: 1;">
+          <canvas width="100%" height="100%" id="pie-chart"></canvas>
+        </div>
 
-    </div>
-
-    <div class="cn-chart-generator-right">
-      <div class="cn-colored-pie-chart">
-        <canvas id="pie-chart"></canvas>
-      </div>
-
-      <v-card class="cn-colors-container">
-        <div class="cn-colors">
-          <div v-for="color in colors" class="cn-color-block-container">
-            <div class="cn-color-block" :style="`background-color: ${color}`">
+        <div class="cn-colors-container" style="min-width: 300px;">
+          <p>Copy All Colors</p>
+          <div class="cn-colors">
+            <div v-for="color in colors"
+              class="cn-color-block-container"
+              :key="color">
+              <div class="cn-color-block" :style="`background-color: ${color}`">
+              </div>
+              <p>{{ color }}</p>
             </div>
-            <p>{{ color }}</p>
           </div>
         </div>
-      </v-card>
+      </div>
+
     </div>
 
-    <div class="cn-chart-generator-far-right">
-      <v-btn flat color="primary" @click="refreshData">Randomize Data</v-btn>
-      <v-btn flat color="primary" @click="addData">Add Data Point</v-btn>
-      <v-btn flat color="error" @click="removeData">Remove Data Point</v-btn>
+    <!-- RIGHT -->
+    <div class="cn-chart-generator-right">
+      <div class="cn-chart-actions">
+        <p>ACTIONS</p>
+        <v-btn flat color="primary" @click="refreshData">Randomize Data</v-btn>
+        <v-btn flat color="primary" @click="addData">Add Data Point</v-btn>
+        <v-btn flat color="error" @click="removeData">Remove Data Point</v-btn>
+      </div>
+
+
+      <p class="cn-chart-instruction">
+        <v-btn icon class="cn-chart-instruction-number">1</v-btn>
+        CHOOSE D3 COLOR SCALE
+      </p>
+      <div class="cn-color-scales-container">
+        <ColorScales/>
+      </div>
+
+      <p class="cn-chart-instruction">
+        <v-btn icon class="cn-chart-instruction-number">2</v-btn>
+        CHOOSE COLOR SCALE RANGE
+      </p>
+      <div class="cn-selected-color-scale-container cn-color-control-container">
+        <SelectedColorScale/>
+      </div>
     </div>
   </div>
 </template>
@@ -62,23 +83,22 @@ export default {
   },
   mounted() {
     this.initializeData();
-
-    let rangeInfo = {
-      start: 0, 
-      end: 1,
-      useEndAsStart: false,
-    };
+    setTimeout(() => {
+      this.pieChart = createChart('pie-chart', this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
+    }, 500);
     
-    this.pieChart = createChart('pie-chart', this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
   },
   methods: {
     initializeData() {
-      this.dataValues = [40000, 15000, 20000, 60000, 15000, 20000, 25000, 30000, 18000, 28000, 30000, 15000];
+      this.dataValues = [40000, 15000, 20000, 60000, 15000, 20000, 25000, 30000,
+        18000, 28000, 30000, 15000];
     },
     refreshData() {
       this.dataValues = [];
-      let dataLength = this.getRandomNumber(2, 20);
-      let i, randomNumber;
+      const dataLength = this.getRandomNumber(2, 20);
+      let i;
+      let randomNumber;
+      // eslint-disable-next-line
       for (i = 0; i < dataLength; i++) {
         randomNumber = this.getRandomNumber(2000, 30000);
         this.dataValues.push(randomNumber);
@@ -86,7 +106,7 @@ export default {
       updateChart(this.pieChart, this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
     },
     addData() {
-      this.dataValues.push(this.getRandomNumber(3000, 100000));
+      this.dataValues.push(this.getRandomNumber(2000, 30000));
       updateChart(this.pieChart, this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
     },
     removeData() {
@@ -98,7 +118,13 @@ export default {
     },
     getRandomNumber(min, max) {
       return Math.round(Math.random() * (max - min) + min);
-    }
+    },
+    randomLabels() {
+      this.dataValues.forEach((value, i) => {
+        this.labelValues.push(`Test ${i}`);
+      });
+      return this.labelValues;
+    },
   },
   computed: {
     scaleName() {
@@ -110,32 +136,27 @@ export default {
     end() {
       return this.$store.getters.end;
     },
-    randomLabels() {
-      this.dataValues.forEach((value, i) => {
-        this.labelValues.push(`Test ${i}`);
-      });
-      return this.labelValues;
-    },
     colors() {
-      let colors = [];
+      const colors = [];
       const dataLength = this.dataValues.length;
-      let i, color;
+      let i;
+      let color;
+      // eslint-disable-next-line
       for (i = 0; i < dataLength; i++) {
         color = this.start + (i * ((this.end - this.start) / dataLength));
-        colors.push(d3.color(d3['interpolate' + this.scaleName](color)).hex());
+        colors.push(d3.color(d3[`interpolate${this.scaleName}`](color)).hex());
       }
-      console.log('colors', colors);
       return colors;
     },
     chartData() {
       return {
         data: this.dataValues,
-        labels: this.randomLabels,
+        labels: this.randomLabels(),
       };
     },
     rangeInfo() {
       return {
-        start: this.start, 
+        start: this.start,
         end: this.end,
         useEndAsStart: false,
       };
@@ -149,13 +170,14 @@ export default {
       },
     },
     '$store.getters.start': {
+      // eslint-disable-next-line
       handler: function () {
         updateChart(this.pieChart, this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
       },
     },
     '$store.getters.end': {
+      // eslint-disable-next-line
       handler: function () {
-        console.log('getting fired');
         updateChart(this.pieChart, this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
       },
     },
@@ -165,26 +187,48 @@ export default {
 </script>
 
 <style lang='scss'>
+
+  /* LAYOUT */
   .cn-chart-generator {
-    padding: 24px;
     height: 100%;
     display: flex;
+    overflow: hidden;
+  }
+
+  .cn-chart-generator-left,
+  .cn-chart-generator-right {
+    height: calc(100% - 1px);
+    overflow-y: auto;
+    padding: 24px;
   }
 
   .cn-chart-generator-left {
-    max-width: 350px;
+    flex: 1;
   }
 
-  .cn-chart-generator-far-right {
-    max-width: 200px;
-    justify-content: flex-end;
-    text-align: right;
-    background-color: #eeeeee;
-    max-height: 180px;
-    margin-top: -24px;
-    padding-top: 12px;
+  .cn-chart-generator-right {
+    background-color: #f1f1f1;
+    width: 400px;
   }
 
+
+  /* INSTRUCTIONS */
+  .cn-chart-instruction {
+    display: flex;
+    align-items: center;
+    margin: 24px 0px 12px;
+  }
+
+  .cn-chart-instruction-number {
+    background-color: #b9cdff !important;
+    color: #5355ff !important;
+    font-weight: 600;
+    pointer-events: none;
+    margin: 0px 6px 0 0;
+  }
+
+  
+  /* LIST OF COLOR SCALES */
   .cn-color-scales-container {
     background-color: white;
     padding: 24px;
@@ -193,33 +237,33 @@ export default {
     overflow: hidden;
   }
 
-  .cn-selected-color-scale-container {
-    margin-top: 24px;
+  .cn-color-control-container {
+    background-color: white;
     padding: 24px;
   }
 
-  // .cn-chart-generator-right {
-  //   max-width: 600px;
-  // }
+  /* SLIDER */
+  .cn-selected-color-scale-container {
+    padding: 24px;
+  }
 
   .cn-colored-pie-chart {
     width: 100% !important;
   }
 
   #pie-chart {
-    width: 100% !important;
+    max-width: 400px;
+    margin: 0 auto;
   }
 
   .cn-colors-container {
-    padding: 24px;
-    margin: 36px 0 0 24px;
+    margin: 24px;
   }
 
   .cn-colors {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
-
 
   .cn-color-block-container {
     display: flex;
