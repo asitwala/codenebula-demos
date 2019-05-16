@@ -3,16 +3,36 @@
 
     <!-- LEFT -->
     <div class="cn-chart-generator-left">
-      <p><span>codeNebula</span> <span> presents</span></p>
-      <p>Generating Chart Colors with D3 & ChartJS</p>
+      <p>
+        <span class="cn-logo">code<span class="cn-logo-divider">N</span>ebula
+        </span> 
+        <span class="cn-presents"> presents</span>
+      </p>
+      <h1>Generating Chart Colors with 
+        <a class="cn-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="">
+          D3 
+        </a>& 
+        <a class="cn-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="">
+          ChartJS
+        </a>
+      </h1>
 
       <div style="display: flex; align-items: flex-start; flex-wrap: wrap; justify-content: center; margin-top: 48px;">
-        <div class="cn-colored-pie-chart" style="flex: 1;">
+        <div class="cn-colored-pie-chart" style="max-width: 400px;">
           <canvas width="100%" height="100%" id="pie-chart"></canvas>
         </div>
 
-        <div class="cn-colors-container" style="min-width: 300px;">
-          <p>Copy All Colors</p>
+        <div class="cn-colors-container" style="flex: 1">
+          <p>
+            <v-icon>fas fa-copy</v-icon>
+            Copy All Colors
+          </p>
           <div class="cn-colors">
             <div v-for="color in colors"
               class="cn-color-block-container"
@@ -30,7 +50,14 @@
     <!-- RIGHT -->
     <div class="cn-chart-generator-right">
       <div class="cn-chart-actions">
-        <p>ACTIONS</p>
+
+        <p class="cn-chart-instruction">
+          <v-btn icon
+            class="cn-chart-instruction-btn cn-chart-instruction-icon">
+            <v-icon>fas fa-tools</v-icon>
+          </v-btn>
+          ACTIONS
+        </p>
         <v-btn flat color="primary" @click="refreshData">Randomize Data</v-btn>
         <v-btn flat color="primary" @click="addData">Add Data Point</v-btn>
         <v-btn flat color="error" @click="removeData">Remove Data Point</v-btn>
@@ -38,15 +65,21 @@
 
 
       <p class="cn-chart-instruction">
-        <v-btn icon class="cn-chart-instruction-number">1</v-btn>
+        <v-btn icon
+          class="cn-chart-instruction-btn cn-chart-instruction-icon">
+          <v-icon>fas fa-paint-brush</v-icon>
+        </v-btn>
         CHOOSE D3 COLOR SCALE
       </p>
       <div class="cn-color-scales-container">
         <ColorScales/>
       </div>
 
-      <p class="cn-chart-instruction">
-        <v-btn icon class="cn-chart-instruction-number">2</v-btn>
+      <p class="cn-chart-instruction" style="margin-top: 36px">
+        <v-btn icon
+          class="cn-chart-instruction-btn cn-chart-instruction-icon">
+          <v-icon>fas fa-sliders-h</v-icon>
+        </v-btn>
         CHOOSE COLOR SCALE RANGE
       </p>
       <div class="cn-selected-color-scale-container cn-color-control-container">
@@ -188,11 +221,45 @@ export default {
 
 <style lang='scss'>
 
+  /* LINKS */
+  .cn-link {
+    text-decoration: none;
+    padding-bottom: 3px;
+    border-bottom: 4px solid transparent;
+    transition: 0.5s border ease;
+
+    &:hover {
+      border-bottom: 4px solid #d7e0ff
+    }
+  }
+
+  /* LOGO + HEADER */
+  .cn-logo {
+    font-family: 'Ubuntu', 'Open Sans', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+
+    &-divider {
+      font-family: 'Acme', 'Ubuntu', 'Open Sans', Helvetica, Arial, sans-serif;
+      font-size: 18px;
+    }
+  }
+
+  .cn-presents {
+    color: #777777;
+  }
+
+  .cn-chart-generator {
+    h1 {
+      font-weight: normal;
+      font-size: 24px;
+    }
+  }
+
   /* LAYOUT */
   .cn-chart-generator {
     height: 100%;
     display: flex;
-    overflow: hidden;
+    flex-wrap: wrap;
   }
 
   .cn-chart-generator-left,
@@ -204,6 +271,7 @@ export default {
 
   .cn-chart-generator-left {
     flex: 1;
+    min-width: 300px;
   }
 
   .cn-chart-generator-right {
@@ -211,42 +279,8 @@ export default {
     width: 400px;
   }
 
-
-  /* INSTRUCTIONS */
-  .cn-chart-instruction {
-    display: flex;
-    align-items: center;
-    margin: 24px 0px 12px;
-  }
-
-  .cn-chart-instruction-number {
-    background-color: #b9cdff !important;
-    color: #5355ff !important;
-    font-weight: 600;
-    pointer-events: none;
-    margin: 0px 6px 0 0;
-  }
-
   
-  /* LIST OF COLOR SCALES */
-  .cn-color-scales-container {
-    background-color: white;
-    padding: 24px;
-    width: 100%;
-    height: 275px;
-    overflow: hidden;
-  }
-
-  .cn-color-control-container {
-    background-color: white;
-    padding: 24px;
-  }
-
-  /* SLIDER */
-  .cn-selected-color-scale-container {
-    padding: 24px;
-  }
-
+  /* PIE CHART */
   .cn-colored-pie-chart {
     width: 100% !important;
   }
@@ -255,6 +289,47 @@ export default {
     max-width: 400px;
     margin: 0 auto;
   }
+
+
+  /* INSTRUCTIONS */
+  .cn-chart-instruction {
+    display: flex;
+    align-items: center;
+    margin: 24px 0px 12px;
+    font-weight: 600;
+  }
+
+  .cn-chart-instruction-btn {
+    background-color: #b9cdff !important;
+    pointer-events: none;
+    margin: 0px 6px 0 0;
+  }
+
+
+  .cn-chart-instruction-icon i {
+    font-size: 20px !important;
+    color: #666ef1 !important;
+  }
+
+  
+  /* LIST OF COLOR SCALES */
+  .cn-color-scales-container {
+    background-color: white;
+    width: 100%;
+    height: 275px;
+    overflow: hidden;
+  }
+
+  /* RANGE SLIDER */
+  .cn-color-control-container {
+    background-color: white;
+    padding: 24px;
+  }
+
+  .cn-selected-color-scale-container {
+    padding: 24px;
+  }
+
 
   .cn-colors-container {
     margin: 24px;
@@ -269,6 +344,7 @@ export default {
     display: flex;
     align-items: center;
     margin: 0 24px 24px 0;
+    cursor: pointer;
 
     p {
       margin-bottom: 0px;

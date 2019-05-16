@@ -67,6 +67,7 @@ export default {
 <style lang='scss'>
 
 .cn-color-scales {
+  padding: 24px;
   overflow-y: auto;
   height: 100%;
 
