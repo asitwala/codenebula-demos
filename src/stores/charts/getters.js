@@ -8,6 +8,9 @@ const getters = {
   end(state) {
     return state.end;
   },
+  useEndAsStart(state) {
+    return state.useEndAsStart;
+  },
 };
 
 export default getters;

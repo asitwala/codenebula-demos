@@ -5,8 +5,6 @@ import { interpolateColors } from './colorCalculations';
 export function createChart(chartId, scaleName, chartData, rangeInfo, formatData) {
   const ctx = document.getElementById(chartId);
 
-  console.log('chart data', chartData);
-
   /* eslint-disable */
   let COLORS = [];
 
@@ -64,8 +62,6 @@ export function createChart(chartId, scaleName, chartData, rangeInfo, formatData
 
 export function updateChart(chartObj, scaleName, chartData, rangeInfo, formatData) {
   let dataLength = chartData.data.length;
-
-  console.log('Range Info', rangeInfo);
 
   const COLORS = interpolateColors(dataLength, d3['interpolate' + scaleName], rangeInfo);
 

@@ -4,17 +4,17 @@
     <!-- LEFT -->
     <div class="cn-chart-generator-left">
       <p>
-        <span class="cn-logo">code<span class="cn-logo-divider">N</span>ebula
-        </span> 
+        <span class="cn-logo cn-link">code<span class="cn-logo-divider">N</span>ebula
+        </span>
         <span class="cn-presents"> presents</span>
       </p>
-      <h1>Generating Chart Colors with 
+      <h1>Generating Chart Colors with
         <a class="cn-link"
           target="_blank"
           rel="noopener noreferrer"
           href="">
-          D3 
-        </a>& 
+          D3
+        </a>&
         <a class="cn-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -23,34 +23,74 @@
         </a>
       </h1>
 
-      <div style="display: flex; align-items: flex-start; flex-wrap: wrap; justify-content: center; margin-top: 48px;">
-        <div class="cn-colored-pie-chart" style="max-width: 400px;">
+      <div class="cn-chart-generator-results">
+        <div class="cn-colored-pie-chart">
           <canvas width="100%" height="100%" id="pie-chart"></canvas>
         </div>
 
-        <div class="cn-colors-container" style="flex: 1">
-          <p>
-            <v-icon>fas fa-copy</v-icon>
-            Copy All Colors
-          </p>
-          <div class="cn-colors">
-            <div v-for="color in colors"
-              class="cn-color-block-container"
-              :key="color">
-              <div class="cn-color-block" :style="`background-color: ${color}`">
+        <div class="cn-colors-container">
+          <div>
+            <div class="cn-color-copy-meta">
+               <div class="cn-color-copy-scale-name">
+                <v-icon>fas fa-star</v-icon>
+                interpolate{{ scaleName }}
               </div>
-              <p>{{ color }}</p>
+              <v-chip>{{ dataLength }} DATA POINTS</v-chip>
             </div>
+
+            <v-tooltip
+              left
+              top
+              :value="colorsStringCopied"
+              :disabled="!colorsStringCopied"
+            >
+              <div
+                slot="activator"
+                @click="copyColorsString()"
+                @mouseout="clearColorsStringCopy()"
+                class="cn-color-copy-all">
+                <v-icon>fas fa-copy</v-icon>
+                Copy All Color Codes
+              </div>
+              <span>Copied!</span>
+            </v-tooltip>
+
+            <div class="cn-color-copy-subtext">
+              Or click on a color below to copy a specific color code
+              <input
+                id="colors-string"
+                class="cn-color-input"
+                :value="colorsString"/>
+            </div>
+          </div>
+
+          <div class="cn-colors">
+            <v-tooltip
+              v-for="(color, index) in colors"
+              :key="`${color}-${index}`"
+              top
+              :value="colorCopied === `${color}-${index}`"
+              :disabled="colorCopied !== `${color}-${index}`">
+              <div
+                slot="activator"
+                @click="copyColor(color, index)"
+                @mouseout="clearCopy()"
+                class="cn-color-block-container">
+                <div class="cn-color-block" :style="`background-color: ${color}`"></div>
+                <p>{{ color }}</p>
+                <input class="cn-color-input" :value="color"
+                  :id="`${color}-${index}`" />
+              </div>
+              <span>Copied!</span>
+            </v-tooltip>
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- RIGHT -->
     <div class="cn-chart-generator-right">
       <div class="cn-chart-actions">
-
         <p class="cn-chart-instruction">
           <v-btn icon
             class="cn-chart-instruction-btn cn-chart-instruction-icon">
@@ -112,6 +152,8 @@ export default {
       labelValues: [],
       dataCSV: '',
       labelCSV: '',
+      colorCopied: '',
+      colorsStringCopied: false,
     };
   },
   mounted() {
@@ -119,9 +161,26 @@ export default {
     setTimeout(() => {
       this.pieChart = createChart('pie-chart', this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
     }, 500);
-    
   },
   methods: {
+    copyColor(color, index) {
+      const colorInput = document.getElementById(`${color}-${index}`);
+      colorInput.select();
+      document.execCommand('copy');
+      this.colorCopied = `${color}-${index}`;
+    },
+    clearCopy() {
+      this.colorCopied = '';
+    },
+    copyColorsString() {
+      const colorsStringInput = document.getElementById('colors-string');
+      colorsStringInput.select();
+      document.execCommand('copy');
+      this.colorsStringCopied = true;
+    },
+    clearColorsStringCopy() {
+      this.colorsStringCopied = false;
+    },
     initializeData() {
       this.dataValues = [40000, 15000, 20000, 60000, 15000, 20000, 25000, 30000,
         18000, 28000, 30000, 15000];
@@ -143,7 +202,7 @@ export default {
       updateChart(this.pieChart, this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
     },
     removeData() {
-      const dataLength = this.dataValues.length;
+      const { dataLength } = this;
       const removeIndex = this.getRandomNumber(0, dataLength - 1);
       this.dataValues.splice(removeIndex, 1);
       this.labelValues.splice(removeIndex, 1);
@@ -169,17 +228,31 @@ export default {
     end() {
       return this.$store.getters.end;
     },
+    useEndAsStart() {
+      return this.$store.getters.useEndAsStart;
+    },
+    dataLength() {
+      return this.dataValues.length;
+    },
     colors() {
       const colors = [];
-      const dataLength = this.dataValues.length;
+      const { dataLength } = this;
       let i;
       let color;
       // eslint-disable-next-line
       for (i = 0; i < dataLength; i++) {
-        color = this.start + (i * ((this.end - this.start) / dataLength));
+        if (this.useEndAsStart) {
+          color = this.end - (i * ((this.end - this.start) / dataLength));
+        } else {
+          color = this.start + (i * ((this.end - this.start) / dataLength));
+        }
         colors.push(d3.color(d3[`interpolate${this.scaleName}`](color)).hex());
       }
+
       return colors;
+    },
+    colorsString() {
+      return this.colors.join(', ');
     },
     chartData() {
       return {
@@ -191,7 +264,7 @@ export default {
       return {
         start: this.start,
         end: this.end,
-        useEndAsStart: false,
+        useEndAsStart: this.useEndAsStart,
       };
     },
   },
@@ -214,6 +287,12 @@ export default {
         updateChart(this.pieChart, this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
       },
     },
+    '$store.getters.useEndAsStart': {
+      // eslint-disable-next-line
+      handler: function() {
+        updateChart(this.pieChart, this.scaleName, this.chartData, this.rangeInfo, dollarFormat);
+      },
+    },
   },
 };
 
@@ -227,9 +306,10 @@ export default {
     padding-bottom: 3px;
     border-bottom: 4px solid transparent;
     transition: 0.5s border ease;
+    cursor: pointer;
 
     &:hover {
-      border-bottom: 4px solid #d7e0ff
+      border-bottom: 4px solid #d7e0ff;
     }
   }
 
@@ -237,6 +317,7 @@ export default {
   .cn-logo {
     font-family: 'Ubuntu', 'Open Sans', Helvetica, Arial, sans-serif;
     font-size: 16px;
+    color: #576adb;
 
     &-divider {
       font-family: 'Acme', 'Ubuntu', 'Open Sans', Helvetica, Arial, sans-serif;
@@ -279,10 +360,19 @@ export default {
     width: 400px;
   }
 
-  
+  .cn-chart-generator-results {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 48px;
+  }
+
+
   /* PIE CHART */
   .cn-colored-pie-chart {
     width: 100% !important;
+    max-width: 400px;
   }
 
   #pie-chart {
@@ -305,13 +395,11 @@ export default {
     margin: 0px 6px 0 0;
   }
 
-
   .cn-chart-instruction-icon i {
     font-size: 20px !important;
     color: #666ef1 !important;
   }
 
-  
   /* LIST OF COLOR SCALES */
   .cn-color-scales-container {
     background-color: white;
@@ -330,9 +418,61 @@ export default {
     padding: 24px;
   }
 
+  /* Color Code Copy */
+  .cn-color-copy-meta {
+    margin-bottom: 24px;
+    margin-left: -1px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
 
+  .cn-color-copy-scale-name {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #ffd54f !important;
+      font-size: 18px;
+      margin-right: 4px;
+    }
+  }
+
+  .cn-color-copy-all {
+    color: #585858;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: 0.5 all ease;
+    display: inline-block;
+
+    i {
+      color: #bbbbbb !important;
+      font-size: 18px;
+      margin-right: 4px;
+    }
+
+    &:hover {
+      color: #576adb;
+      i {
+        color: #576adb !important;
+      }
+    }
+  }
+
+  .cn-color-copy-subtext {
+    color: #777777;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-style: italic;
+  }
+
+
+  /* Colors */
   .cn-colors-container {
     margin: 24px;
+    flex: 1;
   }
 
   .cn-colors {
@@ -348,13 +488,32 @@ export default {
 
     p {
       margin-bottom: 0px;
+      transition: 0.1s all ease-in;
+    }
+
+    &:hover {
+      .cn-color-block {
+        opacity: 0.75;
+        height: 22px;
+        width: 22px;
+      }
+
+      p {
+        color: #777777;
+      }
     }
   }
 
   .cn-color-block {
+    transition: 0.1s all ease-in;
     height: 24px;
     width: 24px;
     display: inline-block;
     margin-right: 12px;
+  }
+
+  .cn-color-input {
+    opacity: 0;
+    width: 1px !important; // must be greater than 0
   }
 </style>

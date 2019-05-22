@@ -2,6 +2,9 @@
   <div class="cn-color-scales">
     <div v-for="scaleName in scales" :key="scaleName">
       <label>
+        <v-icon
+          class="cn-color-scales-selected-icon"
+          v-if="selectedScale === scaleName">fas fa-star</v-icon>
         {{ `interpolate${scaleName}`}}
       </label>
 
@@ -13,7 +16,6 @@
 
 <script>
 import * as d3 from 'd3';
-// import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import COLOR_SCALES from '../../utils/colorScaleNames';
 
 
@@ -23,7 +25,7 @@ export default {
       width: 300,
       height: 24,
       scales: COLOR_SCALES,
-      selectedScale: '',
+      selectedScale: 'Rainbow',
     };
   },
   mounted() {
@@ -56,7 +58,6 @@ export default {
         .style('fill', function (d) { return d3['interpolate' + scaleName](0 + (d * (1/width))); });
     },
     selectScale(scaleName) {
-      console.log('Scale', scaleName);
       this.selectedScale = scaleName;
       this.$store.commit('setScale', scaleName);
     },
@@ -70,6 +71,11 @@ export default {
   padding: 24px;
   overflow-y: auto;
   height: 100%;
+
+  label {
+    display: flex;
+    margin-bottom: 4px;
+  }
 
   svg {
     display: block;
@@ -91,6 +97,12 @@ export default {
       }
     }
   }
+}
+
+.cn-color-scales-selected-icon {
+  font-size: 14px;
+  color: #ffd54f !important;
+  margin-right: 4px;
 }
 
 </style>

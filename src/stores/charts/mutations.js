@@ -11,6 +11,10 @@ const mutations = {
     // eslint-disable-next-line
     state.end = end;
   },
+  setUseEndAsStart(state, useEndAsStart) {
+    // eslint-disable-next-line
+    state.useEndAsStart = useEndAsStart;
+  },
 };
 
 export default mutations;

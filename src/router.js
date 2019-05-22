@@ -8,12 +8,12 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: 'chart-demo',
+      path: '/chart-color-generator',
+      name: 'chart-color-generator',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "chart-demo" */ './views/ChartColorGenerator.vue'),
+      component: () => import(/* webpackChunkName: "chart-color-generator" */ './views/ChartColorGenerator.vue'),
     },
   ],
 });
