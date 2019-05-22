@@ -90,40 +90,43 @@
 
     <!-- RIGHT -->
     <div class="cn-chart-generator-right">
-      <div class="cn-chart-actions">
+      <div class="cn-chart-generator-right-container">
+
+        <div class="cn-chart-actions">
+          <p class="cn-chart-instruction">
+            <v-btn icon
+              class="cn-chart-instruction-btn cn-chart-instruction-icon">
+              <v-icon>fas fa-tools</v-icon>
+            </v-btn>
+            ACTIONS
+          </p>
+          <v-btn flat color="primary" @click="refreshData">Randomize Data</v-btn>
+          <v-btn flat color="primary" @click="addData">Add Data Point</v-btn>
+          <v-btn flat color="error" @click="removeData">Remove Data Point</v-btn>
+        </div>
+
+
         <p class="cn-chart-instruction">
           <v-btn icon
             class="cn-chart-instruction-btn cn-chart-instruction-icon">
-            <v-icon>fas fa-tools</v-icon>
+            <v-icon>fas fa-paint-brush</v-icon>
           </v-btn>
-          ACTIONS
+          CHOOSE D3 COLOR SCALE
         </p>
-        <v-btn flat color="primary" @click="refreshData">Randomize Data</v-btn>
-        <v-btn flat color="primary" @click="addData">Add Data Point</v-btn>
-        <v-btn flat color="error" @click="removeData">Remove Data Point</v-btn>
-      </div>
+        <div class="cn-color-scales-container">
+          <ColorScales/>
+        </div>
 
-
-      <p class="cn-chart-instruction">
-        <v-btn icon
-          class="cn-chart-instruction-btn cn-chart-instruction-icon">
-          <v-icon>fas fa-paint-brush</v-icon>
-        </v-btn>
-        CHOOSE D3 COLOR SCALE
-      </p>
-      <div class="cn-color-scales-container">
-        <ColorScales/>
-      </div>
-
-      <p class="cn-chart-instruction" style="margin-top: 36px">
-        <v-btn icon
-          class="cn-chart-instruction-btn cn-chart-instruction-icon">
-          <v-icon>fas fa-sliders-h</v-icon>
-        </v-btn>
-        CHOOSE COLOR SCALE RANGE
-      </p>
-      <div class="cn-selected-color-scale-container cn-color-control-container">
-        <SelectedColorScale/>
+        <p class="cn-chart-instruction" style="margin-top: 36px">
+          <v-btn icon
+            class="cn-chart-instruction-btn cn-chart-instruction-icon">
+            <v-icon>fas fa-sliders-h</v-icon>
+          </v-btn>
+          CHOOSE COLOR SCALE RANGE
+        </p>
+        <div class="cn-selected-color-scale-container cn-color-control-container">
+          <SelectedColorScale/>
+        </div>
       </div>
     </div>
   </div>
@@ -340,7 +343,7 @@ export default {
   .cn-chart-generator {
     height: 100%;
     display: flex;
-    flex-wrap: wrap;
+    overflow: hidden;
   }
 
   .cn-chart-generator-left,
@@ -516,4 +519,66 @@ export default {
     opacity: 0;
     width: 1px !important; // must be greater than 0
   }
+
+  /* MOBILE RESPONSIVENESS */
+  @mixin for-smaller-screens {
+    @media (max-width: 800px) {
+      @content;
+    }
+  }
+
+  @include for-smaller-screens {
+    .cn-chart-generator {
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+
+    .cn-chart-generator-left,
+    .cn-chart-generator-right {
+      overflow: visible;
+      height: auto !important;
+    }
+
+    .cn-chart-generator-right {
+      width: 100%;
+      padding: 0px !important;
+    }
+
+    .cn-chart-generator-right-container {
+      width: 400px;
+      padding: 24px;
+      margin: 0 auto;
+    }
+  }
+
+  /* MOBILE RESPONSIVENESS */
+  @mixin for-smaller-screens-2 {
+    @media (max-width: 400px) {
+      @content;
+    }
+  }
+
+  @include for-smaller-screens-2 {
+    .cn-colors {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .cn-chart-generator-right-container {
+      width: 100%;
+    }
+
+    .cn-selected-color-scale-container {
+      padding: 24px 0px;
+    }
+
+    .cn-chart-generator-right-container {
+      padding: 24px 0px;
+    }
+
+    .cn-chart-instruction {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+
 </style>

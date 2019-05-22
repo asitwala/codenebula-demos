@@ -69,7 +69,8 @@ export default {
 
 .cn-color-scales {
   padding: 24px;
-  overflow-y: auto;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   height: 100%;
 
   label {
@@ -105,4 +106,18 @@ export default {
   margin-right: 4px;
 }
 
+/* MOBILE RESPONSIVENESS */
+  @mixin for-smaller-screens-2 {
+    @media (max-width: 400px) {
+      @content;
+    }
+  }
+
+  @include for-smaller-screens-2 {
+    .cn-color-scales {
+      padding: 24px 0px;
+      width: 300px;
+      margin: 0 auto;
+    }
+  }
 </style>
