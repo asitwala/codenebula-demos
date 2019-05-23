@@ -4,21 +4,24 @@
     <!-- LEFT -->
     <div class="cn-chart-generator-left">
       <p>
-        <span class="cn-logo cn-link">code<span class="cn-logo-divider">N</span>ebula
-        </span>
+        <a class="cn-link"
+          href="https://codenebula.io/demos">
+          <span class="cn-logo">code<span class="cn-logo-divider">N</span>ebula
+          </span>
+        </a>
         <span class="cn-presents"> presents</span>
       </p>
       <h1>Generating Chart Colors with
         <a class="cn-link"
           target="_blank"
           rel="noopener noreferrer"
-          href="">
+          href="https://github.com/d3/d3-scale-chromatic">
           D3
         </a>&
         <a class="cn-link"
           target="_blank"
           rel="noopener noreferrer"
-          href="">
+          href="https://www.chartjs.org/">
           ChartJS
         </a>
       </h1>
